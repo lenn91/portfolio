@@ -1,0 +1,253 @@
+:root {
+  --paper: #0f0f0f;
+  --ink: #efefef;
+  --soft: #a0a0a0;
+  --line: #2e2e2e;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 17px/1.6 "Instrument Sans", system-ui, sans-serif;
+  overflow: hidden;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
+}
+
+.stage {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 24px;
+  isolation: isolate;
+  text-align: left;
+}
+
+/* the portrait, blurred and dim until the button is hovered */
+.ghost {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: min(62vw, 720px);
+  background-position: center top;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: grayscale(1) blur(22px) brightness(.55) contrast(1.1);
+  opacity: .5;
+  transform: scale(1.06);
+  transition: filter .9s ease, opacity .9s ease, transform 1.2s ease;
+  -webkit-mask-image: linear-gradient(to left, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to left, #000 35%, transparent 100%);
+  z-index: -2;
+}
+
+.stage:has(.go:hover, .go:focus-visible) .ghost {
+  filter: grayscale(1) blur(0) brightness(.95) contrast(1.05);
+  opacity: .95;
+  transform: scale(1);
+}
+
+/* pointer spotlight */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle 260px at var(--mx, 30%) var(--my, 40%), rgba(255, 255, 255, .08), transparent 70%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.copy {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hi {
+  margin: 0 0 12px;
+  color: var(--soft);
+  font-size: 16px;
+  letter-spacing: .02em;
+  opacity: 0;
+  animation: up .8s .1s forwards;
+}
+
+.name {
+  margin: 0;
+  font: 800 clamp(52px, 12vw, 160px)/.92 Syne, sans-serif;
+  letter-spacing: -.035em;
+  text-transform: uppercase;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  opacity: 0;
+  animation: up .9s .25s forwards;
+}
+
+.name span {
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+  transition: color .5s;
+}
+
+.stage:has(.go:hover, .go:focus-visible) .name span {
+  color: var(--ink);
+}
+
+.roles {
+  margin: 20px 0 36px;
+  color: var(--soft);
+  font-size: clamp(15px, 2vw, 19px);
+  line-height: 1.45;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-transform: capitalize;
+  opacity: 0;
+  animation: up .9s .45s forwards;
+}
+
+.go {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px 32px;
+  border: 2px solid var(--ink);
+  border-radius: 99px;
+  color: var(--paper);
+  background: var(--ink);
+  font: 800 20px Syne, sans-serif;
+  text-decoration: none;
+  opacity: 0;
+  animation: up .9s .65s forwards, pulse 2.6s 1.8s infinite;
+  transition: background .25s, color .25s, transform .25s;
+}
+
+.go:hover,
+.go:focus-visible {
+  background: transparent;
+  color: var(--ink);
+  transform: translateY(-2px);
+}
+
+.go:active {
+  transform: scale(.97);
+}
+
+.arrow {
+  display: inline-block;
+  transition: transform .25s;
+}
+
+.go:hover .arrow,
+.go:focus-visible .arrow {
+  transform: translateX(6px);
+}
+
+.hint {
+  margin: 16px 0 0;
+  color: var(--soft);
+  font-size: 14px;
+  opacity: 0;
+  animation: up .9s .85s forwards;
+}
+
+/* curtain that wipes up when the button is pressed */
+.curtain {
+  position: fixed;
+  inset: 0;
+  background: var(--ink);
+  transform: translateY(100%);
+  transition: transform .7s cubic-bezier(.7, 0, .2, 1);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.leaving .curtain {
+  transform: translateY(0);
+}
+
+@keyframes up {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 239, 239, .35);
+  }
+
+  60% {
+    box-shadow: 0 0 0 18px rgba(239, 239, 239, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .stage {
+    padding: 24px 16px;
+  }
+
+  .name {
+    font-size: clamp(48px, 16vw, 88px);
+    line-height: .96;
+  }
+
+  .roles {
+    margin: 16px 0 28px;
+  }
+
+  .ghost {
+    width: 100vw;
+    opacity: .35;
+  }
+
+  .name span {
+    -webkit-text-stroke-width: 1.5px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: .01ms !important;
+  }
+
+  .hi,
+  .name,
+  .roles,
+  .go,
+  .hint {
+    opacity: 1;
+  }
+}
